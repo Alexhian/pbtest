@@ -1,34 +1,43 @@
 import dotenv from "dotenv";
-import mysql from "mysql2/promise";
+import { Client } from "pg";
 import fs from "node:fs";
 
 dotenv.config();
 
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
+
 const migrate = async () => {
-	const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
-
-	const connection = await mysql.createConnection({
-		host: DB_HOST,
-		user: DB_USER,
-		password: DB_PASSWORD,
-		multipleStatements: true,
+    // Connexion à la base postgres pour créer/supprimer la base cible
+    const adminClient = new Client({
+        host: DB_HOST,
+        user: DB_USER,
+        password: DB_PASSWORD,
+        database: "postgres",
 	});
+    await adminClient.connect();
 
-	await connection.query(`drop database if exists ${DB_NAME}`);
-	await connection.query(`create database ${DB_NAME}`);
-	await connection.query(`use ${DB_NAME}`);
+    await adminClient.query(`DROP DATABASE IF EXISTS "${DB_NAME}"`);
+    await adminClient.query(`CREATE DATABASE "${DB_NAME}"`);
+    await adminClient.end();
 
-	const sql = fs.readFileSync("./database/schema.sql", "utf8");
+    // Connexion à la nouvelle base pour exécuter le schéma
+    const dbClient = new Client({
+        host: DB_HOST,
+        user: DB_USER,
+        password: DB_PASSWORD,
+        database: DB_NAME,
+    });
+    await dbClient.connect();
 
-	await connection.query(sql);
+    const sql = fs.readFileSync("./database/shema.sql", "utf8");
+    await dbClient.query(sql);
 
-	connection.end();
+    await dbClient.end();
 };
 
-export default migrate;
-
 try {
-	migrate();
+    await migrate();
+    console.log("Migration terminée !");
 } catch (err) {
-	console.error(err);
+    console.error(err);
 }
