@@ -30,3 +30,12 @@ CREATE TABLE propertycharacteristics (
     surface DECIMAL(10, 2),
     rooms INT
 );
+
+
+-- {
+--     "reference" : "1",
+--     "price" : "100",
+--     "addess" : "21 jump street",
+--     "city" : "Dubaï",
+--     "postalcode" : "44800"
+-- }

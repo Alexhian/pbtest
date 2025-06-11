@@ -7,7 +7,6 @@ dotenv.config();
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
 const migrate = async () => {
-    // Connexion à la base postgres pour créer/supprimer la base cible
     const adminClient = new Client({
         host: DB_HOST,
         user: DB_USER,
@@ -20,7 +19,6 @@ const migrate = async () => {
     await adminClient.query(`CREATE DATABASE "${DB_NAME}"`);
     await adminClient.end();
 
-    // Connexion à la nouvelle base pour exécuter le schéma
     const dbClient = new Client({
         host: DB_HOST,
         user: DB_USER,
@@ -29,7 +27,7 @@ const migrate = async () => {
     });
     await dbClient.connect();
 
-    const sql = fs.readFileSync("./database/shema.sql", "utf8");
+    const sql = fs.readFileSync("./database/schema.sql", "utf8");
     await dbClient.query(sql);
 
     await dbClient.end();

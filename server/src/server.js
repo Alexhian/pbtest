@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import projectRoutes from "./projectRoutes.js";
+import router from "./router.js";
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ app.get('/',  (req, res) => {
   res.send('hello from server')
 })
 
-app.use("/projects", projectRoutes);
+app.use("/", router);
 
 app
 	.listen(port, () => {
