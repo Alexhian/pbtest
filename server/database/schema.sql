@@ -16,10 +16,10 @@ CREATE TABLE purchasers (
 CREATE TABLE properties (
     id SERIAL PRIMARY KEY,
     reference VARCHAR(255) NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
+    price INT NOT NULL,
     address VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
-    postalcode VARCHAR(20) NOT NULL,
+    postalCode INT NOT NULL,
     user_id INT REFERENCES users(id),
     purchaser_id INT REFERENCES purchasers(id)
 );
@@ -27,15 +27,17 @@ CREATE TABLE properties (
 CREATE TABLE propertycharacteristics (
     id SERIAL PRIMARY KEY,
     property_id INT REFERENCES properties(id),
-    surface DECIMAL(10, 2),
+    surface INT,
     rooms INT
 );
+
+insert into properties(reference, price, address, city, postalCode) values ('rcz72', '100000', '21 jump street', 'New York', '75000');
 
 
 -- {
 --     "reference" : "1",
 --     "price" : "100",
---     "addess" : "21 jump street",
+--     "address" : "21 jump street",
 --     "city" : "Dubaï",
---     "postalcode" : "44800"
+--     "postalCode" : "44800"
 -- }

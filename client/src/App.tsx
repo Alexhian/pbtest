@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 interface FormData {
   reference: string;
   price: number;
   address: string;
   city: string;
-  postalCode: string;
+  postalCode: number;
 }
 
 function App() {
@@ -14,47 +15,55 @@ function App() {
     price: 0,
     address: '',
     city: '',
-    postalCode: '',
+    postalCode: 0
   });
-  
 
-  // useEffect(() => {
-	// 	const fetchProperties = async () => {
-	// 		try {
-	// 			const res = await axios.get(`${import.meta.env.VITE_API_URL}/projects`);
-	// 			setProperties(res.data);
-	// 		} catch {
-	// 			setError("Erreur lors de la récupération des projets.");
-	// 		}
-	// 	};
-	// 	fetchProperties();
-	// }, []);
+  const [submittedData, setSubmittedData] = useState<FormData[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: name === 'price' ? Number(value) : value,
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties`);
+      setSubmittedData(response.data);
+    } catch (error) {
+      console.error('There was an error fetching the data!', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form Data Submitted:', formData);
-    
-    // try{
-    //   const res = await axios.post(`${import.meta.env.VITE_API_URL}/`, formData);
-    //   setFormData()
-    // } catch {
-    //   setError("Erreur lors de l'envoi du formulaire.");
-    // }
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/properties`, formData);
+      console.log('Form Data Submitted:', formData);
+      setFormData({
+        reference: '',
+        price: 0,
+        address: '',
+        city: '',
+        postalCode: 0,
+      });
+      fetchData();
+    } catch (error) {
+      console.error('There was an error submitting the form!', error);
+    }
   };
 
   return (
-    <div className='flex flex-col items-center space-y-4'>
-      <h1 className='text-4xl'>Property Form</h1>
-      <form onSubmit={handleSubmit}
-      className='space-y-3 justify-center'>
+    <div className="flex flex-col items-center space-y-4">
+      <h1 className="text-4xl">Property Form</h1>
+      <form onSubmit={handleSubmit} className="space-y-3 justify-center">
         <div>
           <input
             type="text"
@@ -63,58 +72,76 @@ function App() {
             value={formData.reference}
             onChange={handleChange}
             className="self-center px-3 py-2 rounded-lg border"
-            placeholder='Reference'
+            placeholder="Reference"
           />
         </div>
-        <div className='space-x-2'>
+        <div className="space-x-2">
           <input
             type="number"
             id="price"
             name="price"
             value={formData.price}
             onChange={handleChange}
-             className="self-center px-3 py-2 rounded-lg w-2/3 border"
-            placeholder='Price'
+            className="self-center px-3 py-2 rounded-lg w-2/3 border"
+            placeholder="Price"
           />
-          <label htmlFor="Price">Euros </label>
+          <label htmlFor="price">Euros</label>
         </div>
-        <div className='space-x-2'>
+        <div className="space-x-2">
           <input
             type="text"
             id="address"
             name="address"
             value={formData.address}
             onChange={handleChange}
-             className="self-center px-3 py-2 rounded-lg border"
-            placeholder='address'
+            className="self-center px-3 py-2 rounded-lg border"
+            placeholder="Address"
           />
         </div>
-        <div className='space-x-2'>
+        <div className="space-x-2">
           <input
             type="text"
             id="city"
             name="city"
             value={formData.city}
             onChange={handleChange}
-             className="self-center px-3 py-2 rounded-lg border"
-            placeholder='City'
+            className="self-center px-3 py-2 rounded-lg border"
+            placeholder="City"
           />
         </div>
-        <div className='space-x-2'>
+        <div className="space-x-2">
           <input
-            type="text"
+            type="number"
             id="postalCode"
             name="postalCode"
             value={formData.postalCode}
             onChange={handleChange}
-             className="self-center px-3 py-2 rounded-lg border"
-            placeholder='Postal code'
+            className="self-center px-3 py-2 rounded-lg border"
+            placeholder="postalCode"
           />
         </div>
-        <button className='border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700 ' type="submit">Submit</button>
+        <button
+          className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700"
+          type="submit"
+        >
+          Submit
+        </button>
       </form>
+
+      <div className="flex space-x-4">
+        {submittedData.map((data, index) => (
+          <div key={index} className="border p-4 rounded-lg shadow">
+            <h2 className="text-xl font-bold">Property {index + 1}</h2>
+            <p>Reference: {data.reference}</p>
+            <p>Price: {data.price} Euros</p>
+            <p>Address: {data.address}</p>
+            <p>City: {data.city}</p>
+            <p>PostalCode: {data.postalCode}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
-};
+}
 
 export default App;
