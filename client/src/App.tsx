@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PurchaserForm from './composants/PurchaserForm';
+import PropertyCharacteristicsForm from './composants/PropertyCharacteristicsForm';
 
 interface FormData {
   reference: string;
   price: number;
   address: string;
   city: string;
-  postalCode: number;
+  postcode: number;
 }
 
 interface Purchaser {
@@ -16,9 +17,15 @@ interface Purchaser {
   searchcriteria: string;
 }
 
+interface PropertyCharacteristics {
+  surface: number;
+  rooms: number;
+}
+
 interface Property extends FormData {
   id: number;
   purchasers: Purchaser[];
+  characteristics: PropertyCharacteristics[];
 }
 
 function App() {
@@ -27,16 +34,18 @@ function App() {
     price: 0,
     address: '',
     city: '',
-    postalCode: 0
+    postcode: 0
   });
 
   const [submittedData, setSubmittedData] = useState<Property[]>([]);
+  const [showPurchaserForm, setShowPurchaserForm] = useState<{ [key: number]: boolean }>({});
+  const [showCharacteristicsForm, setShowCharacteristicsForm] = useState<{ [key: number]: boolean }>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === 'price' || name === 'postalCode' ? Number(value) : value,
+      [name]: name === 'price' || name === 'postcode' ? Number(value) : value,
     });
   };
 
@@ -62,7 +71,7 @@ function App() {
         price: 0,
         address: '',
         city: '',
-        postalCode: 0,
+        postcode: 0,
       });
       fetchData();
     } catch (error) {
@@ -74,9 +83,27 @@ function App() {
     fetchData();
   };
 
+  const handleCharacteristicAdded = () => {
+    fetchData();
+  };
+
+  const togglePurchaserForm = (propertyId: number) => {
+    setShowPurchaserForm(prevState => ({
+      ...prevState,
+      [propertyId]: !prevState[propertyId]
+    }));
+  };
+
+  const toggleCharacteristicsForm = (propertyId: number) => {
+    setShowCharacteristicsForm(prevState => ({
+      ...prevState,
+      [propertyId]: !prevState[propertyId]
+    }));
+  };
+
   return (
     <div className="flex flex-col items-center space-y-4">
-      <h1 className="text-4xl">Property Form</h1>
+      <h1 className="text-4xl">Create new property</h1>
       <form onSubmit={handleSubmit} className="space-y-3 justify-center">
         <div>
           <input
@@ -126,12 +153,12 @@ function App() {
         <div className="space-x-2">
           <input
             type="number"
-            id="postalCode"
-            name="postalCode"
-            value={formData.postalCode}
+            id="postcode"
+            name="postcode"
+            value={formData.postcode}
             onChange={handleChange}
             className="self-center px-3 py-2 rounded-lg border"
-            placeholder="Postal Code"
+            placeholder="Postcode"
           />
         </div>
         <button
@@ -150,24 +177,50 @@ function App() {
             <p>Price: {data.price} Euros</p>
             <p>Address: {data.address}</p>
             <p>City: {data.city}</p>
-            <p>Postal Code: {data.postalCode}</p>
+            <p>Postcode: {data.postcode}</p>
             <div>
               <h3 className="text-lg font-bold">Purchasers</h3>
               <ul>
                 {data.purchasers && data.purchasers.map((purchaser, index) => (
                   <li key={index}>
-                    {purchaser?.firstname} {purchaser?.lastname} - {purchaser?.searchcriteria}
+                    <p>Fullnames: {purchaser?.firstname} {purchaser?.lastname}</p>
+                    <p>Search criteria: {purchaser?.searchcriteria}</p> 
                   </li>
                 ))}
               </ul>
             </div>
-            <PurchaserForm propertyId={data.id} onPurchaserAdded={handlePurchaserAdded} />
+            <div>
+              <h3 className="text-lg font-bold">Characteristics</h3>
+              <ul>
+                {data.characteristics && data.characteristics.map((characteristic, index) => (
+                  <li key={index}>
+                    <p>Surface: {characteristic?.surface} m²</p>
+                    <p>Rooms: {characteristic?.rooms}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {!showPurchaserForm[data.id] ? (
+              <button onClick={() => togglePurchaserForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Add Purchaser</button>
+            ) : (
+              <div>
+                <button onClick={() => togglePurchaserForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Hide</button>
+                <PurchaserForm propertyId={data.id} onPurchaserAdded={handlePurchaserAdded} />
+              </div>
+            )}
+            {!showCharacteristicsForm[data.id] ? (
+              <button onClick={() => toggleCharacteristicsForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Add Characteristics</button>
+            ) : (
+              <div>
+                <button onClick={() => toggleCharacteristicsForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Hide</button>
+                <PropertyCharacteristicsForm propertyId={data.id} onCharacteristicAdded={handleCharacteristicAdded} />
+              </div>
+            )}
           </div>
         ))}
       </div>
     </div>
   );
 }
-
 
 export default App;

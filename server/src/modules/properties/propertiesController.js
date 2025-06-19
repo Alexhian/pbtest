@@ -2,16 +2,16 @@ import { getClient } from "../../../database/db.js";
 
 // Fonction pour créer une nouvelle propriété
 export async function createProperties(req, res) {
-  const { reference, price, address, city, postalCode } = req.body;
+  const { reference, price, address, city, postcode } = req.body;
   const client = getClient();
   try {
     await client.connect();
     const result = await client.query(
-      "INSERT INTO properties (reference, price, address, city, postalCode) VALUES ($1, $2, $3, $4, $5) RETURNING id",
-      [reference, price, address, city, postalCode]
+      "INSERT INTO properties (reference, price, address, city, postcode) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+      [reference, price, address, city, postcode]
     );
     await client.end();
-    res.json({ id: result.rows[0].id, reference, price, address, city, postalCode });
+    res.json({ id: result.rows[0].id, reference, price, address, city, postcode });
   } catch (err) {
     console.error('Error creating property:', err);
     await client.end();
@@ -25,11 +25,20 @@ export async function getProperties(req, res) {
   try {
     await client.connect();
     const result = await client.query(`
-      SELECT p.*, array_to_json(array_agg(purch)) as purchasers
-      FROM properties p
-      LEFT JOIN purchasers purch ON p.id = purch.property_id
-      GROUP BY p.id
-    `);
+       SELECT
+    p.*,
+    array_to_json(array_agg(purch)) as purchasers,
+    COALESCE(
+      (
+        SELECT json_agg(pc)
+        FROM propertycharacteristics pc
+        WHERE pc.property_id = p.id
+      ), '[]'
+    ) as characteristics
+  FROM properties p
+  LEFT JOIN purchasers purch ON p.id = purch.property_id
+  GROUP BY p.id
+`);
     await client.end();
     res.json(result.rows);
   } catch (err) {

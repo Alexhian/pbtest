@@ -11,7 +11,7 @@ CREATE TABLE properties (
     price INT NOT NULL,
     address VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
-    postalCode INT NOT NULL,
+    postcode INT NOT NULL,
     user_id INT REFERENCES users(id)
 );
 
@@ -31,7 +31,7 @@ CREATE TABLE propertycharacteristics (
     rooms INT
 );
 
--- insert into properties(reference, price, address, city, postalCode) values ('rcz72', '100000', '21 jump street', 'New York', '75000');
+-- insert into properties(reference, price, address, city, postcode) values ('rcz72', '100000', '21 jump street', 'New York', '75000');
 
 
 -- {
@@ -39,5 +39,5 @@ CREATE TABLE propertycharacteristics (
 --     "price" : "100",
 --     "address" : "21 jump street",
 --     "city" : "Dubaï",
---     "postalCode" : "44800"
+--     "postcode" : "44800"
 -- }

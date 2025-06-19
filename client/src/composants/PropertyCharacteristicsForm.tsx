@@ -1,45 +1,42 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-interface PurchaserFormProps {
+interface PropertyCharacteristicsFormProps {
   propertyId: number;
-  onPurchaserAdded: () => void;
+  onCharacteristicAdded: () => void;
 }
 
 interface FormData {
-  firstname: string;
-  lastname: string;
-  searchcriteria: string;
+  surface: number;
+  rooms: number;
 }
 
-function PurchaserForm({ propertyId, onPurchaserAdded }: PurchaserFormProps) {
+function PropertyCharacteristicsForm({ propertyId, onCharacteristicAdded }: PropertyCharacteristicsFormProps) {
   const [formData, setFormData] = useState<FormData>({
-    firstname: '',
-    lastname: '',
-    searchcriteria: '',
+    surface: 0,
+    rooms: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: Number(value),
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/purchasers`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/propertycharacteristics`, {
         ...formData,
         propertyId
       });
       setFormData({
-        firstname: '',
-        lastname: '',
-        searchcriteria: '',
+        surface: 0,
+        rooms: 0,
       });
-      onPurchaserAdded();
+      onCharacteristicAdded();
     } catch (error) {
       console.error('There was an error submitting the form!', error);
     }
@@ -49,42 +46,32 @@ function PurchaserForm({ propertyId, onPurchaserAdded }: PurchaserFormProps) {
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
         <input
-          type="text"
-          name="firstname"
-          value={formData.firstname}
+          type="number"
+          name="surface"
+          value={formData.surface}
           onChange={handleChange}
           className="px-3 py-2 rounded-lg border"
-          placeholder="First Name"
+          placeholder="Surface"
         />
       </div>
       <div>
         <input
-          type="text"
-          name="lastname"
-          value={formData.lastname}
+          type="number"
+          name="rooms"
+          value={formData.rooms}
           onChange={handleChange}
           className="px-3 py-2 rounded-lg border"
-          placeholder="Last Name"
-        />
-      </div>
-      <div>
-        <input
-          type="text"
-          name="searchcriteria"
-          value={formData.searchcriteria}
-          onChange={handleChange}
-          className="px-3 py-2 rounded-lg border"
-          placeholder="Search Criteria"
+          placeholder="Number of Rooms"
         />
       </div>
       <button
         className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700"
         type="submit"
       >
-        Add
+        Add Characteristics
       </button>
     </form>
   );
 }
 
-export default PurchaserForm;
+export default PropertyCharacteristicsForm;
