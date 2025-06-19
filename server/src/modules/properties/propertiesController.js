@@ -24,7 +24,12 @@ export async function getProperties(req, res) {
   const client = getClient();
   try {
     await client.connect();
-    const result = await client.query("SELECT * FROM properties");
+    const result = await client.query(`
+      SELECT p.*, array_to_json(array_agg(purch)) as purchasers
+      FROM properties p
+      LEFT JOIN purchasers purch ON p.id = purch.property_id
+      GROUP BY p.id
+    `);
     await client.end();
     res.json(result.rows);
   } catch (err) {
@@ -33,3 +38,4 @@ export async function getProperties(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+

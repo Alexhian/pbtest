@@ -5,14 +5,6 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE purchasers (
-    id SERIAL PRIMARY KEY,
-    firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL,
-    searchcriteria TEXT,
-    user_id INT REFERENCES users(id)
-);
-
 CREATE TABLE properties (
     id SERIAL PRIMARY KEY,
     reference VARCHAR(255) NOT NULL,
@@ -20,8 +12,16 @@ CREATE TABLE properties (
     address VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     postalCode INT NOT NULL,
+    user_id INT REFERENCES users(id)
+);
+
+CREATE TABLE purchasers (
+    id SERIAL PRIMARY KEY,
+    firstname VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
+    searchcriteria TEXT,
     user_id INT REFERENCES users(id),
-    purchaser_id INT REFERENCES purchasers(id)
+    property_id INT REFERENCES properties(id)
 );
 
 CREATE TABLE propertycharacteristics (
@@ -31,7 +31,7 @@ CREATE TABLE propertycharacteristics (
     rooms INT
 );
 
-insert into properties(reference, price, address, city, postalCode) values ('rcz72', '100000', '21 jump street', 'New York', '75000');
+-- insert into properties(reference, price, address, city, postalCode) values ('rcz72', '100000', '21 jump street', 'New York', '75000');
 
 
 -- {

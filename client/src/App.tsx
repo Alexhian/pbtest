@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import PurchaserForm from './composants/PurchaserForm';
 
 interface FormData {
   reference: string;
@@ -7,6 +8,17 @@ interface FormData {
   address: string;
   city: string;
   postalCode: number;
+}
+
+interface Purchaser {
+  firstname: string;
+  lastname: string;
+  searchcriteria: string;
+}
+
+interface Property extends FormData {
+  id: number;
+  purchasers: Purchaser[];
 }
 
 function App() {
@@ -18,13 +30,13 @@ function App() {
     postalCode: 0
   });
 
-  const [submittedData, setSubmittedData] = useState<FormData[]>([]);
+  const [submittedData, setSubmittedData] = useState<Property[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === 'price' ? Number(value) : value,
+      [name]: name === 'price' || name === 'postalCode' ? Number(value) : value,
     });
   };
 
@@ -41,12 +53,10 @@ function App() {
     fetchData();
   }, []);
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/properties`, formData);
-      console.log('Form Data Submitted:', formData);
       setFormData({
         reference: '',
         price: 0,
@@ -58,6 +68,10 @@ function App() {
     } catch (error) {
       console.error('There was an error submitting the form!', error);
     }
+  };
+
+  const handlePurchaserAdded = () => {
+    fetchData();
   };
 
   return (
@@ -117,7 +131,7 @@ function App() {
             value={formData.postalCode}
             onChange={handleChange}
             className="self-center px-3 py-2 rounded-lg border"
-            placeholder="postalCode"
+            placeholder="Postal Code"
           />
         </div>
         <button
@@ -129,19 +143,31 @@ function App() {
       </form>
 
       <div className="flex space-x-4">
-        {submittedData.map((data, index) => (
-          <div key={index} className="border p-4 rounded-lg shadow">
-            <h2 className="text-xl font-bold">Property {index + 1}</h2>
+        {submittedData.map((data) => (
+          <div key={data.id} className="border p-4 rounded-lg shadow">
+            <h2 className="text-xl font-bold">Property {data.id}</h2>
             <p>Reference: {data.reference}</p>
             <p>Price: {data.price} Euros</p>
             <p>Address: {data.address}</p>
             <p>City: {data.city}</p>
-            <p>PostalCode: {data.postalCode}</p>
+            <p>Postal Code: {data.postalCode}</p>
+            <div>
+              <h3 className="text-lg font-bold">Purchasers</h3>
+              <ul>
+                {data.purchasers && data.purchasers.map((purchaser, index) => (
+                  <li key={index}>
+                    {purchaser?.firstname} {purchaser?.lastname} - {purchaser?.searchcriteria}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <PurchaserForm propertyId={data.id} onPurchaserAdded={handlePurchaserAdded} />
           </div>
         ))}
       </div>
     </div>
   );
 }
+
 
 export default App;
