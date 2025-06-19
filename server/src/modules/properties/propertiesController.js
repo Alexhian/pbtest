@@ -26,18 +26,23 @@ export async function getProperties(req, res) {
     await client.connect();
     const result = await client.query(`
        SELECT
-    p.*,
-    array_to_json(array_agg(purch)) as purchasers,
-    COALESCE(
-      (
-        SELECT json_agg(pc)
-        FROM propertycharacteristics pc
-        WHERE pc.property_id = p.id
-      ), '[]'
-    ) as characteristics
-  FROM properties p
-  LEFT JOIN purchasers purch ON p.id = purch.property_id
-  GROUP BY p.id
+        p.*,
+        COALESCE(
+          (
+            SELECT json_agg(purch)
+            FROM purchasers purch
+            WHERE purch.property_id = p.id
+          ), '[]'
+        ) as purchasers,
+        COALESCE(
+          (
+            SELECT json_agg(pc)
+            FROM propertycharacteristics pc
+            WHERE pc.property_id = p.id
+          ), '[]'
+        ) as characteristics
+      FROM properties p
+      GROUP BY p.id
 `);
     await client.end();
     res.json(result.rows);

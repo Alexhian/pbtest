@@ -102,120 +102,138 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <h1 className="text-4xl">Create new property</h1>
-      <form onSubmit={handleSubmit} className="space-y-3 justify-center">
-        <div>
-          <input
-            type="text"
-            id="reference"
-            name="reference"
-            value={formData.reference}
-            onChange={handleChange}
-            className="self-center px-3 py-2 rounded-lg border"
-            placeholder="Reference"
-          />
-        </div>
-        <div className="space-x-2">
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            className="self-center px-3 py-2 rounded-lg w-2/3 border"
-            placeholder="Price"
-          />
-          <label htmlFor="price">Euros</label>
-        </div>
-        <div className="space-x-2">
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            className="self-center px-3 py-2 rounded-lg border"
-            placeholder="Address"
-          />
-        </div>
-        <div className="space-x-2">
-          <input
-            type="text"
-            id="city"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            className="self-center px-3 py-2 rounded-lg border"
-            placeholder="City"
-          />
-        </div>
-        <div className="space-x-2">
-          <input
-            type="number"
-            id="postcode"
-            name="postcode"
-            value={formData.postcode}
-            onChange={handleChange}
-            className="self-center px-3 py-2 rounded-lg border"
-            placeholder="Postcode"
-          />
-        </div>
-        <button
-          className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700"
-          type="submit"
-        >
-          Submit
-        </button>
-      </form>
+    <div className="min-h-screen bg-gray-900 text-white p-8">
+      <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-lg p-6">
+        <h1 className="text-3xl font-bold text-center mb-6">Create New Property</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="reference" className="block text-sm font-medium mb-1">Reference</label>
+            <input
+              type="text"
+              id="reference"
+              name="reference"
+              value={formData.reference}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Reference"
+            />
+          </div>
+          <div>
+            <label htmlFor="price" className="block text-sm font-medium mb-1">Price</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Price"
+            />
+          </div>
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium mb-1">Address</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Address"
+            />
+          </div>
+          <div className="flex space-x-4">
+            <div className="w-1/2">
+              <label htmlFor="city" className="block text-sm font-medium mb-1">City</label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="City"
+              />
+            </div>
+            <div className="w-1/2">
+              <label htmlFor="postcode" className="block text-sm font-medium mb-1">Postcode</label>
+              <input
+                type="number"
+                id="postcode"
+                name="postcode"
+                value={formData.postcode}
+                onChange={handleChange}
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Postcode"
+              />
+            </div>
+          </div>
+          <button
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            type="submit"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
 
-      <div className="flex space-x-4">
+      <div className="max-w-4xl mx-auto mt-8 grid grid-cols-1 gap-6">
         {submittedData.map((data) => (
-          <div key={data.id} className="border p-4 rounded-lg shadow">
-            <h2 className="text-xl font-bold">Property {data.id}</h2>
-            <p>Reference: {data.reference}</p>
-            <p>Price: {data.price} Euros</p>
-            <p>Address: {data.address}</p>
-            <p>City: {data.city}</p>
-            <p>Postcode: {data.postcode}</p>
-            <div>
-              <h3 className="text-lg font-bold">Purchasers</h3>
-              <ul>
-                {data.purchasers && data.purchasers.map((purchaser, index) => (
-                  <li key={index}>
-                    <p>Fullnames: {purchaser?.firstname} {purchaser?.lastname}</p>
-                    <p>Search criteria: {purchaser?.searchcriteria}</p> 
-                  </li>
-                ))}
-              </ul>
+          <div key={data.id} className="space-y-4">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-6">
+              <h2 className="text-xl font-bold mb-4">Property {data.id}</h2>
+              <p className="mb-2"><span className="font-semibold">Reference:</span> {data.reference}</p>
+              <p className="mb-2"><span className="font-semibold">Price:</span> {data.price} Euros</p>
+              <p className="mb-2"><span className="font-semibold">Address:</span> {data.address}</p>
+              <p className="mb-2"><span className="font-semibold">City:</span> {data.city}</p>
+              <p className="mb-4"><span className="font-semibold">Postcode:</span> {data.postcode}</p>
             </div>
-            <div>
-              <h3 className="text-lg font-bold">Characteristics</h3>
-              <ul>
+            <div className="bg-gray-700 rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4">Characteristics</h3>
+              <ul className="space-y-3">
                 {data.characteristics && data.characteristics.map((characteristic, index) => (
-                  <li key={index}>
-                    <p>Surface: {characteristic?.surface} m²</p>
-                    <p>Rooms: {characteristic?.rooms}</p>
+                  <li key={index} className="p-4 bg-gray-600 rounded-lg">
+                    <p><span className="font-semibold">Surface:</span> {characteristic?.surface} m²</p>
+                    <p><span className="font-semibold">Rooms:</span> {characteristic?.rooms}</p>
                   </li>
                 ))}
               </ul>
+              {!showCharacteristicsForm[data.id] ? (
+                <button onClick={() => toggleCharacteristicsForm(data.id)} className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 mt-4">
+                  Add Characteristics
+                </button>
+              ) : (
+                <div>
+                  <button onClick={() => toggleCharacteristicsForm(data.id)} className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 mt-4">
+                    Hide
+                  </button>
+                  <PropertyCharacteristicsForm propertyId={data.id} onCharacteristicAdded={handleCharacteristicAdded} />
+                </div>
+              )}
             </div>
-            {!showPurchaserForm[data.id] ? (
-              <button onClick={() => togglePurchaserForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Add Purchaser</button>
-            ) : (
-              <div>
-                <button onClick={() => togglePurchaserForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Hide</button>
-                <PurchaserForm propertyId={data.id} onPurchaserAdded={handlePurchaserAdded} />
-              </div>
-            )}
-            {!showCharacteristicsForm[data.id] ? (
-              <button onClick={() => toggleCharacteristicsForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Add Characteristics</button>
-            ) : (
-              <div>
-                <button onClick={() => toggleCharacteristicsForm(data.id)} className="border-2 border-solid px-3 py-1 rounded-lg cursor-pointer hover:bg-gray-700">Hide</button>
-                <PropertyCharacteristicsForm propertyId={data.id} onCharacteristicAdded={handleCharacteristicAdded} />
-              </div>
-            )}
+            <div className="bg-gray-700 rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4">Purchasers</h3>
+              <ul className="space-y-3">
+                {data.purchasers && data.purchasers.map((purchaser, index) => (
+                  <li key={index} className="p-4 bg-gray-600 rounded-lg">
+                    <p><span className="font-semibold">Fullname:</span> {purchaser?.firstname} {purchaser?.lastname}</p>
+                    <p><span className="font-semibold">Search criteria:</span> {purchaser?.searchcriteria}</p>
+                  </li>
+                ))}
+              </ul>
+              {!showPurchaserForm[data.id] ? (
+                <button onClick={() => togglePurchaserForm(data.id)} className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 mt-4">
+                  Add Purchaser
+                </button>
+              ) : (
+                <div>
+                  <button onClick={() => togglePurchaserForm(data.id)} className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 mt-4">
+                    Hide
+                  </button>
+                  <PurchaserForm propertyId={data.id} onPurchaserAdded={handlePurchaserAdded} />
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>

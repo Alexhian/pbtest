@@ -45,23 +45,23 @@ function PropertyCharacteristicsForm({ propertyId, onCharacteristicAdded }: Prop
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
+        <label htmlFor="surface" className="block text-sm font-medium mb-1">Surface</label>
         <input
           type="number"
           name="surface"
           value={formData.surface}
           onChange={handleChange}
           className="px-3 py-2 rounded-lg border"
-          placeholder="Surface"
         />
       </div>
       <div>
+        <label htmlFor="rooms" className="block text-sm font-medium mb-1">Rooms</label>
         <input
           type="number"
           name="rooms"
           value={formData.rooms}
           onChange={handleChange}
           className="px-3 py-2 rounded-lg border"
-          placeholder="Number of Rooms"
         />
       </div>
       <button
